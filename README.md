@@ -10,12 +10,15 @@ Detection of drones using FastRCNN via [CNTK's implemententation](https://github
 
 ## Anaconda
 (Install Anaconda previously or let the install-cntk.sh do it for you, recommended to do it previously)
+
 https://www.anaconda.com/download/#linux
 
 ## CNTK (linux)
 Download CNTK-2.3.1 (CPU only) tar.gz = https://cntk.ai/dllc-2.3.html
 Extract it out.
+
 `cd /home/username/cntk/Scripts/install/linux`
+
 `./install-cntk.sh --py-version 34`
 
 Above command will make an env called cntk-py34
@@ -25,20 +28,23 @@ Activate above env by command: `source activate cntk-py34`
 Activate CNTK env by command: `source "/home/slapbot/cntk/activate-cntk"`
 
 ## Repository
-Clone the repo: ....
+Clone the repo: `git clone https://github.com/SlapBot/Drone-Detectron.git`
 
-`cd drone-detection/Detection/FastRCNN`
+Cd in: `cd drone-detection/Detection/FastRCNN`
 
 ## Install AlexNet Model
 Install the AlexNet Model: `python install_fastrcnn.py`
 
 ## Install Python Package Deps
 Install its deps: `pip install -r requirements.txt`
+
 Install Scikit-Image: `pip install scikit-image`
 
 ## Reinstall Broken Deps
-Remove pre-installed opencv from conda and install latest one from pip via commands:
+Remove pre-installed opencv from conda (bug) and install latest one from pip via commands:
+
 `conda remove opencv`
+
 `pip install opencv-python`
 
 # Testing Instructions
@@ -59,7 +65,9 @@ Finally train the model using:
 Evaluate and See the results using: `python evaluateDetections.py`
 
 
-Change the value count to any value upto which you wanna see the results at: drone-detection/Detection/FastRCNN/imdb_data.py L:236 `visualize_multiple(visualizers[2:], count=10)`
+Change the value count to any value upto which you wanna see the results at: 
+
+drone-detection/Detection/FastRCNN/imdb_data.py L:236 `visualize_multiple(visualizers[2:], count=10)`
 
 ## Credits
 
