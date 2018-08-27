@@ -4,7 +4,7 @@ Detection of drones using FastRCNN via [CNTK's implemententation](https://github
 
 ### Bounding box detection of drones (small scale quadcopters)
 
-![alt text](https://i.imgur.com/kGWT4qG.gif "Detection results")
+![alt text](https://i.imgur.com/8by9aIh.gif "Detection results")
 
 # Installation Instructions:
 
@@ -55,8 +55,8 @@ Finally train the model using:
 
 `cntk configFile=/home/username/drone-detection/Detection/FastRCNN/proc/Drones_500/cntkFiles/fastrcnn.cntk currentDirectory=/home/username/drone-detection/Detection/FastRCNN/proc/Drones_500/cntkFiles/ NumLabels=3 NumTrainROIs=500 TrainROIDim=2000 TrainROILabelDim=1500 NumTestROIs=500 TestROIDim=2000 TestROILabelDim=1500`
 
-#Evaluating and Visualizing Model
-Evaluate and See the results using: python evaluateDetections.py
+# Evaluating and Visualizing Model
+Evaluate and See the results using: `python evaluateDetections.py`
 
 
 Change the value count to any value upto which you wanna see the results at: drone-detection/Detection/FastRCNN/imdb_data.py L:236 `visualize_multiple(visualizers[2:], count=10)`
