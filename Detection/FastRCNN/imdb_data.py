@@ -207,13 +207,24 @@ class imdb_data(fastRCNN.imdb):
 
         # load ground truth annotations for this class
         gtInfos = []
+        visualizers = []
         for imgIndex in range(self.num_images):
             imgPath = self.image_path_at(imgIndex)
             imgSubir  = os.path.normpath(imgPath).split(os.path.sep)[-2]
             bboxesPaths = imgPath[:-4] + ".bboxes.tsv"
             labelsPaths = imgPath[:-4] + ".bboxes.labels.tsv"
+            # print(classIndex)
+            # print(imgPath)
             if os.path.exists(bboxesPaths) and os.path.exists(labelsPaths):
                 gtBoxes, gtLabels = readGtAnnotation(imgPath)
+                # print(gtBoxes, gtLabels)
+                visualizer = {
+                    "imgPath": imgPath,
+                    "gtBoxes": gtBoxes,
+                    "gtLabels": gtLabels
+                }
+                visualizers.append(visualizer)
+                # exit()
                 gtBoxes = [box for box, label in zip(gtBoxes, gtLabels) if label.decode('utf-8') == self.classes[classIndex]]
             else:
                 gtBoxes = []
@@ -221,88 +232,6 @@ class imdb_data(fastRCNN.imdb):
                            'difficult': [False] * len(gtBoxes),
                            'det': [False] * len(gtBoxes)})
 
-        # parse detections for this class
-        # shape of all_boxes: e.g. 21 classes x 4952 images x 58 rois x 5 coords+score
-        detBboxes = []
-        detImgIndices = []
-        detConfidences = []
-        for imgIndex in range(self.num_images):
-            dets = all_boxes[classIndex][imgIndex]
-            if dets != []:
-                for k in range(dets.shape[0]):
-                    detImgIndices.append(imgIndex)
-                    detConfidences.append(dets[k, -1])
-                    # the VOCdevkit expects 1-based indices
-                    detBboxes.append([dets[k, 0] + 1, dets[k, 1] + 1, dets[k, 2] + 1, dets[k, 3] + 1])
-        detBboxes = np.array(detBboxes)
-        detConfidences = np.array(detConfidences)
-
-        # compute precision / recall / ap
-        rec, prec, ap = self._voc_computePrecisionRecallAp(
-            class_recs=gtInfos,
-            confidence=detConfidences,
-            image_ids=detImgIndices,
-            BB=detBboxes,
-            ovthresh=overlapThreshold,
-            use_07_metric=use_07_metric)
-        return rec, prec, ap
-
-
-    #########################################################################
-    # Python evaluation functions (copied/refactored from faster-RCNN)
-    ##########################################################################
-    def _voc_computePrecisionRecallAp(self, class_recs, confidence, image_ids, BB, ovthresh=0.5, use_07_metric=False):
-        # sort by confidence
-        sorted_ind = np.argsort(-confidence)
-        BB = BB[sorted_ind, :]
-        image_ids = [image_ids[x] for x in sorted_ind]
-
-        # go down dets and mark TPs and FPs
-        nd = len(image_ids)
-        tp = np.zeros(nd)
-        fp = np.zeros(nd)
-        for d in range(nd):
-            R = class_recs[image_ids[d]]
-            bb = BB[d, :].astype(float)
-            ovmax = -np.inf
-            BBGT = R['bbox'].astype(float)
-
-            if BBGT.size > 0:
-                # compute overlaps
-                ixmin = np.maximum(BBGT[:, 0], bb[0])
-                iymin = np.maximum(BBGT[:, 1], bb[1])
-                ixmax = np.minimum(BBGT[:, 2], bb[2])
-                iymax = np.minimum(BBGT[:, 3], bb[3])
-                iw = np.maximum(ixmax - ixmin + 1., 0.)
-                ih = np.maximum(iymax - iymin + 1., 0.)
-                inters = iw * ih
-
-                # union
-                uni = ((bb[2] - bb[0] + 1.) * (bb[3] - bb[1] + 1.) +
-                       (BBGT[:, 2] - BBGT[:, 0] + 1.) *
-                       (BBGT[:, 3] - BBGT[:, 1] + 1.) - inters)
-
-                overlaps = inters / uni
-                ovmax = np.max(overlaps)
-                jmax = np.argmax(overlaps)
-
-            if ovmax > ovthresh:
-                if not R['difficult'][jmax]:
-                    if not R['det'][jmax]:
-                        tp[d] = 1.
-                        R['det'][jmax] = 1
-                    else:
-                        fp[d] = 1.
-            else:
-                fp[d] = 1.
-
-        # compute precision recall
-        npos = sum([len(cr['bbox']) for cr in class_recs])
-        fp = np.cumsum(fp)
-        tp = np.cumsum(tp)
-        rec = tp / float(npos)
-        # avoid divide by zero in case the first detection matches a difficult
-        # ground truth
-        prec = tp / np.maximum(tp + fp, np.finfo(np.float64).eps)
-        ap = computeAveragePrecision(rec, prec, use_07_metric)
-        return rec, prec, ap
+        from visualizer import visualize_multiple
+        visualize_multiple(visualizers[2:], count=10)
+        exit()

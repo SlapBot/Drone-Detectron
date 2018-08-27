@@ -32,6 +32,9 @@ roiDir = os.path.join(procDir, "rois/")
 cntkFilesDir = os.path.join(procDir, "cntkFiles/")
 cntkTemplateDir = rootDir
 
+print(roiDir)
+print(cntkFilesDir)
+
 # ROI generation
 roi_minDimRel = 0.01      # minium relative width/height of a ROI
 roi_maxDimRel = 1.0       # maximum relative width/height of a ROI

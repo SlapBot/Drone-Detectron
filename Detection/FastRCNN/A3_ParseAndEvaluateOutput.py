@@ -50,6 +50,8 @@ else:
     deleteAllFilesInDirectory(evalTempDir, None)
 
 # compute mAPs
+# image_set="test"
+# evalTempDir=None, classifier="nn", nmsThreshold=0.01
 test_net(net, imdb, evalTempDir, None, classifier, nmsThreshold, boUsePythonImpl = True)
 
 print ("DONE.")

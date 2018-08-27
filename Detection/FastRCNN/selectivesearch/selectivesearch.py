@@ -231,8 +231,10 @@ def _merge_regions(r1, r2):
     }
     return rt
 
-def mycmp(x, y): 
-    return cmp(x[1],y[1])
+def mycmp(x, y):
+    a = x > y
+    b = x < y
+    return numpy.subtract(a, b, dtype=numpy.float)
     
 def cmp_to_key(mycmp):
     'Convert a cmp= function into a key= function'
